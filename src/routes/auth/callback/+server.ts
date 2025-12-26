@@ -1,5 +1,6 @@
 import { redirect } from "@sveltejs/kit";
 import { HACKCLUB_CLIENT_ID, HACKCLUB_CLIENT_SECRET } from "$env/static/private";
+import { PUBLIC_URL } from "$env/static/public";
 import { supabase } from "$lib/supabase";
 
 export const GET = async ({ url, cookies, locals }) => {
@@ -25,7 +26,7 @@ export const GET = async ({ url, cookies, locals }) => {
         client_id: HACKCLUB_CLIENT_ID,
         client_secret: HACKCLUB_CLIENT_SECRET,
         code,
-        redirect_uri: "http://localhost:5173/auth/callback",
+        redirect_uri: `${PUBLIC_URL}/auth/callback`,
         grant_type: "authorization_code",
       }),
     });
