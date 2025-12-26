@@ -14,7 +14,7 @@ export const load = async ({ locals }) => {
 };
 
 export const actions = {
-	default: async ({ request, locals }) => {
+	create: async ({ request, locals }) => {
 		if (!locals.user) throw redirect(302, '/login');
 
 		const formData = await request.formData();
@@ -49,4 +49,29 @@ export const actions = {
 
 		return { success: true, shortCode };
 	},
+
+	delete: async ({ request, locals }) => {
+		if (!locals.user) throw redirect(302, '/login');
+
+		const formData = await request.formData();
+		const linkId = formData.get('linkId')?.toString();
+
+		if (!linkId) {
+			return fail(400, { error: 'Link ID is required' });
+		}
+
+		// Delete the link (only if it belongs to the user)
+		const { error } = await supabase
+			.from('links')
+			.delete()
+			.eq('id', linkId)
+			.eq('user_id', locals.user.id);
+
+		if (error) {
+			console.error('Database error:', error);
+			return fail(500, { error: 'Failed to delete link' });
+		}
+
+		return { deleted: true };
+	}
 };

@@ -2,22 +2,8 @@
 	export let data;
 </script>
 
-<div class="min-h-screen bg-zinc-950 text-zinc-100 flex items-center justify-center p-6">
-	<div class="w-full max-w-3xl space-y-8">
-		<!-- Header -->
-		<header class="flex items-center justify-between">
-			<h1 class="text-3xl font-bold tracking-tight">shawty</h1>
-			{#if data?.user}
-				<a href="/dashboard" class="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-sm">
-					Dashboard
-				</a>
-			{:else}
-				<a href="/login" class="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-sm">
-					Log in
-				</a>
-			{/if}
-		</header>
-
+<div class="flex items-center justify-center p-6 min-h-[calc(100vh-73px)]">
+	<div class="w-full max-w-3xl">
 		<!-- Main Card -->
 		<div class="bg-zinc-900 rounded-2xl shadow-lg p-8 text-center space-y-6">
 			<h2 class="text-2xl font-semibold">Short links for Hack Club members</h2>

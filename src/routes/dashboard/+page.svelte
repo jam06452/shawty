@@ -4,20 +4,13 @@
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 </script>
 
-<div class="min-h-screen bg-zinc-950 text-zinc-100 p-6">
+<div class="p-6">
 	<div class="max-w-3xl mx-auto space-y-8">
-		<!-- Header -->
-		<header class="flex items-center justify-between">
-			<a href="/" class="text-3xl font-bold tracking-tight hover:text-zinc-300">shawty</a>
-			<a href="/auth/logout" class="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-sm">
-				Logout
-			</a>
-		</header>
 
 		<!-- Shorten Card -->
 		<div class="bg-zinc-900 rounded-2xl shadow-lg p-6 space-y-4">
 			<h2 class="text-xl font-semibold">Shorten a link</h2>
-			<form method="POST" class="flex gap-3">
+			<form method="POST" action="?/create" class="flex gap-3">
 				<input
 					name="url"
 					placeholder="https://example.com/very/long/link"
@@ -77,6 +70,19 @@
 								>
 									Copy
 								</button>
+								<form method="POST" action="?/delete" class="inline">
+									<input type="hidden" name="linkId" value={link.id} />
+									<button 
+										type="submit"
+										class="w-6 h-6 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 flex items-center justify-center transition-colors"
+										title="Delete link"
+									>
+										<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+											<line x1="18" y1="6" x2="6" y2="18"></line>
+											<line x1="6" y1="6" x2="18" y2="18"></line>
+										</svg>
+									</button>
+								</form>
 							</div>
 						</div>
 					{/each}
