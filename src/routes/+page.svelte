@@ -2,18 +2,39 @@
 	export let data;
 </script>
 
-<h1>Shawty</h1>
-<p>Short links for Hack Club members.</p>
+<div class="min-h-screen bg-zinc-950 text-zinc-100 flex items-center justify-center p-6">
+	<div class="w-full max-w-3xl space-y-8">
+		<!-- Header -->
+		<header class="flex items-center justify-between">
+			<h1 class="text-3xl font-bold tracking-tight">shawty</h1>
+			{#if data?.user}
+				<a href="/dashboard" class="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-sm">
+					Dashboard
+				</a>
+			{:else}
+				<a href="/login" class="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-sm">
+					Log in
+				</a>
+			{/if}
+		</header>
 
-{#if data?.user}
-	<div style="background: #4CAF50; color: white; padding: 20px; margin: 20px 0; border-radius: 8px;">
-		<h2 style="margin: 0;">✅ You're logged in as {data.user.email}!</h2>
-		<a href="/dashboard" style="color: white; font-size: 1.2em; text-decoration: underline;">Go to Dashboard →</a>
+		<!-- Main Card -->
+		<div class="bg-zinc-900 rounded-2xl shadow-lg p-8 text-center space-y-6">
+			<h2 class="text-2xl font-semibold">Short links for Hack Club members</h2>
+			
+			{#if data?.user}
+				<div class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-6">
+					<p class="text-lg text-emerald-400">✅ Logged in as {data.user.email}</p>
+					<a href="/dashboard" class="inline-block mt-4 px-6 py-3 rounded-xl bg-white text-zinc-900 font-medium hover:bg-zinc-200">
+						Go to Dashboard →
+					</a>
+				</div>
+			{:else}
+				<p class="text-zinc-400">Create and manage your short links with Hack Club authentication</p>
+				<a href="/login" class="inline-block px-8 py-4 rounded-xl bg-white text-zinc-900 font-medium hover:bg-zinc-200 text-lg">
+					Log in with Hack Club
+				</a>
+			{/if}
+		</div>
 	</div>
-{:else}
-	<a href="/login">
-		<button style="padding: 15px 30px; font-size: 1.2em; background: #2196F3; color: white; border: none; cursor: pointer; border-radius: 5px;">
-			Log in with Hack Club
-		</button>
-	</a>
-{/if}
+</div>
