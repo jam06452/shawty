@@ -13,7 +13,7 @@
 			<form method="POST" action="?/create" class="flex gap-3">
 				<input
 					name="url"
-					placeholder="https://example.com/very/long/link"
+					placeholder="example.com or https://example.com"
 					required
 					class="flex-1 rounded-xl bg-zinc-800 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-white/20"
 				/>

@@ -18,10 +18,15 @@ export const actions = {
 		if (!locals.user) throw redirect(302, '/login');
 
 		const formData = await request.formData();
-		const url = formData.get('url')?.toString();
+		let url = formData.get('url')?.toString();
 
 		if (!url) {
 			return fail(400, { error: 'URL is required' });
+		}
+
+		// Add https:// if no protocol is specified
+		if (!url.match(/^https?:\/\//i)) {
+			url = 'https://' + url;
 		}
 
 		// Validate URL format
