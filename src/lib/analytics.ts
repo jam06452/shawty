@@ -1,4 +1,4 @@
-import UAParser from 'ua-parser-js';
+import { UAParser } from 'ua-parser-js';
 
 export interface ClickData {
     link_id: string;
@@ -13,7 +13,7 @@ export interface ClickData {
 }
 
 export function parseUserAgent(userAgent: string): { device: string; os: string; browser: string } {
-    const parser = new (UAParser as any)(userAgent);
+    const parser = new UAParser(userAgent);
     const result = parser.getResult();
     
     return {

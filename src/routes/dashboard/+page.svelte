@@ -144,6 +144,15 @@
                                     <!-- Dropdown Menu -->
                                     {#if openMenuId === link.id}
                                         <div class="absolute right-0 mt-2 w-56 bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg py-1 z-10">
+                                            <a href="/dashboard/analytics/{link.id}" class="w-full px-4 py-2 text-left text-sm hover:bg-zinc-700 flex items-center gap-3">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                                                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                                                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                                                </svg>
+                                                View Analytics
+                                            </a>
+                                            
                                             <button onclick={() => showQr(link.id)} class="w-full px-4 py-2 text-left text-sm hover:bg-zinc-700 flex items-center gap-3">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                     <rect x="3" y="3" width="7" height="7"></rect>
