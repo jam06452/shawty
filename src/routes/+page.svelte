@@ -177,7 +177,7 @@
     <!-- CTA Section -->
     <div class="px-6 py-20">
         <div class="mx-auto max-w-4xl">
-            <div class="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-3xl p-12 text-center border border-zinc-800">
+            <div class="bg-linear-to-r from-blue-500/10 to-purple-500/10 rounded-3xl p-12 text-center border border-zinc-800">
                 <h2 class="text-4xl font-bold mb-4">Ready to get started?</h2>
                 <p class="text-xl text-zinc-400 mb-8">Join Hack Clubbers already using Shawty</p>
                 {#if !data?.user}
