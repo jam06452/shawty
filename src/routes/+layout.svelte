@@ -24,10 +24,16 @@
 					<a href="/dashboard" class="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-sm transition-colors">
 						Dashboard
 					</a>
+					<a href="/leaderboard" class="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-sm transition-colors">
+						Leaderboard
+					</a>
 					<a href="/auth/logout" class="px-4 py-2 rounded-lg bg-red-800/50 border-red-700 hover:border-red-600 hover:bg-red-700/50 text-sm transition-colors">
 						Logout
 					</a>
 				{:else}
+					<a href="/leaderboard" class="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-sm transition-colors">
+						Leaderboard
+					</a>
 					<a href="/login" class="px-4 py-2 rounded-lg bg-white text-zinc-900 hover:bg-zinc-200 text-sm font-medium transition-colors">
 						Log in
 					</a>
