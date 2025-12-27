@@ -75,7 +75,7 @@
 
 			<!-- Bottom bar -->
 			<div class="mt-8 pt-6 border-t border-zinc-800 text-center text-sm text-zinc-400">
-				<p>&copy; {new Date().getFullYear()} shawty. All rights reserved.</p>
+				<p>&copy; {new Date().getFullYear()} shawty. Built with ❤️ by <a href="https://vejas.zip" class="text-decoration-underline">Vejas</a></p>
 			</div>
 		</div>
 	</footer>
