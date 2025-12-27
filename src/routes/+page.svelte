@@ -151,12 +151,14 @@
                 <!-- Feature 5 -->
                 <div class="bg-zinc-900 rounded-2xl p-8 border border-zinc-800 hover:border-zinc-700 transition-colors">
                     <div class="w-12 h-12 rounded-xl bg-pink-500/10 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink-400">
-                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-pink-400">
+                            <line x1="6" y1="20" x2="6" y2="12"></line>
+                            <line x1="12" y1="20" x2="12" y2="8"></line>
+                            <line x1="18" y1="20" x2="18" y2="4"></line>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Lightning Fast</h3>
-                    <p class="text-zinc-400">Built with SvelteKit for blazing fast performance.</p>
+                    <h3 class="text-xl font-semibold mb-2">Analytics for each link</h3>
+                    <p class="text-zinc-400">See analytics for every link you create with great detail.</p>
                 </div>
 
                 <!-- Feature 6 -->
