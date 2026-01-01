@@ -63,7 +63,7 @@ export const GET = async ({ url, cookies, locals }) => {
         .update({
           name: userName,
           email: userData.identity.primary_email,
-          slack_id: slack_id, // always sync slack_id
+          slack_id: userData.identity.slack_id, // always sync slack_id
           first_name: firstName,
           last_name: lastName,
         })
@@ -93,7 +93,7 @@ export const GET = async ({ url, cookies, locals }) => {
       userId = newUser.id;
     }
 
-    cookies.set("hc_session2", userId, {
+    cookies.set("hc_session", userId, {
       path: "/",
       httpOnly: true,
       sameSite: "lax",
