@@ -31,7 +31,7 @@
 					<span class="text-sm">
 						Hey, <span class=" font-medium">{data.user.first_name}</span>!
 					</span>
-					<Button href="/dashboard" variant="default" class="px-4 py-2 rounded-lg bg-zinc-800 border border-transparent hover:border-zinc-600 hover:bg-zinc-700 text-sm transition-colors">
+					<Button href="/dashboard" variant="default" class="">
 						Dashboard
 					</Button>
 					<Button href="/leaderboard" variant="ghost" class="">

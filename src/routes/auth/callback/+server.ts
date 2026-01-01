@@ -93,7 +93,7 @@ export const GET = async ({ url, cookies, locals }) => {
       userId = newUser.id;
     }
 
-    cookies.set("hc_session", userId, {
+    cookies.set("hc_session2", userId, {
       path: "/",
       httpOnly: true,
       sameSite: "lax",
