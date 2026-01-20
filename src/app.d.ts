@@ -12,6 +12,9 @@ declare global {
 			};
 		}
 	}
+
+	const __GIT_COMMIT_HASH__: string;
+	const __GITHUB_REPO_URL__: string;
 }
 
 export {};

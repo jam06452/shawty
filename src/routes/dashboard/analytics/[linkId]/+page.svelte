@@ -23,7 +23,7 @@
         <!-- Header -->
         <div class="flex items-center justify-between">
             <div>
-                <a href="/dashboard" class="text-sm text-zinc-400 hover:text-white mb-2 inline-flex items-center gap-2">
+                <a href="/dashboard" class="text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-white mb-2 inline-flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="19" y1="12" x2="5" y2="12"></line>
                         <polyline points="12 19 5 12 12 5"></polyline>
@@ -32,17 +32,17 @@
                 </a>
                 <h1 class="text-3xl font-bold">Analytics</h1>
                 <div class="flex items-center gap-2 mt-2">
-                    <a href="/{data.link.short_code}" class="text-lg text-blue-400 hover:underline">
+                    <a href="/{data.link.short_code}" class="text-lg text-blue-500 dark:text-blue-400 hover:underline">
                         vejas.site/{data.link.short_code}
                     </a>
                     <span class="text-zinc-500">→</span>
-                    <a href={data.link.long_url} target="_blank" rel="noopener noreferrer" class="text-sm text-zinc-400 hover:text-zinc-300 truncate max-w-md">
+                    <a href={data.link.long_url} target="_blank" rel="noopener noreferrer" class="text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-300 truncate max-w-md">
                         {data.link.long_url}
                     </a>
                 </div>
             </div>
             <div class="text-right">
-                <p class="text-sm text-zinc-400">Total Clicks</p>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">Total Clicks</p>
                 <p class="text-4xl font-bold">{data.analytics.totalClicks.toLocaleString()}</p>
             </div>
         </div>
@@ -50,7 +50,7 @@
         <!-- Stats Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Countries -->
-            <div class="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
+            <div class="dark:bg-zinc-900 rounded-xl p-6 border dark:border-zinc-800">
                 <div class="flex items-center gap-2 mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-blue-400">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -62,7 +62,7 @@
                 <div class="space-y-2">
                     {#each getTopItems(data.analytics.byCountry, 3) as [country, count]}
                         <div class="flex items-center justify-between text-sm">
-                            <span class="text-zinc-300">{country}</span>
+                            <span class="dark:text-zinc-300">{country}</span>
                             <span class="font-medium">{count}</span>
                         </div>
                     {/each}
@@ -70,7 +70,7 @@
             </div>
 
             <!-- Devices -->
-            <div class="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
+            <div class="dark:bg-zinc-900 rounded-xl p-6 border dark:border-zinc-800">
                 <div class="flex items-center gap-2 mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-green-400">
                         <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
@@ -82,7 +82,7 @@
                 <div class="space-y-2">
                     {#each getTopItems(data.analytics.byDevice, 3) as [device, count]}
                         <div class="flex items-center justify-between text-sm">
-                            <span class="text-zinc-300 capitalize">{device}</span>
+                            <span class="dark:text-zinc-300 capitalize">{device}</span>
                             <span class="font-medium">{count}</span>
                         </div>
                     {/each}
@@ -90,7 +90,7 @@
             </div>
 
             <!-- Operating Systems -->
-            <div class="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
+            <div class="dark:bg-zinc-900 rounded-xl p-6 border dark:border-zinc-800">
                 <div class="flex items-center gap-2 mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-purple-400">
                         <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
@@ -109,7 +109,7 @@
                 <div class="space-y-2">
                     {#each getTopItems(data.analytics.byOS, 3) as [os, count]}
                         <div class="flex items-center justify-between text-sm">
-                            <span class="text-zinc-300">{os}</span>
+                            <span class="dark:text-zinc-300">{os}</span>
                             <span class="font-medium">{count}</span>
                         </div>
                     {/each}
@@ -117,7 +117,7 @@
             </div>
 
             <!-- Browsers -->
-            <div class="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
+            <div class="dark:bg-zinc-900 rounded-xl p-6 border dark:border-zinc-800">
                 <div class="flex items-center gap-2 mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-orange-400">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -131,7 +131,7 @@
                 <div class="space-y-2">
                     {#each getTopItems(data.analytics.byBrowser, 3) as [browser, count]}
                         <div class="flex items-center justify-between text-sm">
-                            <span class="text-zinc-300">{browser}</span>
+                            <span class="dark:text-zinc-300">{browser}</span>
                             <span class="font-medium">{count}</span>
                         </div>
                     {/each}
@@ -142,14 +142,14 @@
         <!-- Charts Section -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Country Chart -->
-            <div class="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
+            <div class="dark:bg-zinc-900 rounded-xl p-6 border dark:border-zinc-800">
                 <h3 class="text-lg font-semibold mb-4">Clicks by Country</h3>
                 <div class="space-y-3">
                     {#each getTopItems(data.analytics.byCountry, 10) as [country, count]}
                         <div class="space-y-1">
                             <div class="flex items-center justify-between text-sm">
-                                <span class="text-zinc-300">{country}</span>
-                                <span class="text-zinc-400">{count} ({getPercentage(count, data.analytics.totalClicks)}%)</span>
+                                <span class="dark:text-zinc-300">{country}</span>
+                                <span class="text-zinc-600 dark:text-zinc-400">{count} ({getPercentage(count, data.analytics.totalClicks)}%)</span>
                             </div>
                             <div class="w-full bg-zinc-800 rounded-full h-2">
                                 <div 
@@ -163,14 +163,14 @@
             </div>
 
             <!-- Device Chart -->
-            <div class="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
+            <div class="dark:bg-zinc-900 rounded-xl p-6 border dark:border-zinc-800">
                 <h3 class="text-lg font-semibold mb-4">Clicks by Device</h3>
                 <div class="space-y-3">
                     {#each getTopItems(data.analytics.byDevice) as [device, count]}
                         <div class="space-y-1">
                             <div class="flex items-center justify-between text-sm">
-                                <span class="text-zinc-300 capitalize">{device}</span>
-                                <span class="text-zinc-400">{count} ({getPercentage(count, data.analytics.totalClicks)}%)</span>
+                                <span class="dark:text-zinc-300 capitalize">{device}</span>
+                                <span class="text-zinc-600 dark:text-zinc-400">{count} ({getPercentage(count, data.analytics.totalClicks)}%)</span>
                             </div>
                             <div class="w-full bg-zinc-800 rounded-full h-2">
                                 <div 
@@ -185,12 +185,12 @@
         </div>
 
         <!-- Click Log -->
-        <div class="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
+        <div class="dark:bg-zinc-900 rounded-xl p-6 border dark:border-zinc-800">
             <h3 class="text-lg font-semibold mb-4">Recent Clicks</h3>
             {#if data.clicks && data.clicks.length > 0}
                 <div class="overflow-x-auto">
                     <table class="w-full">
-                        <thead class="border-b border-zinc-800">
+                        <thead class="border-b dark:border-zinc-800">
                             <tr class="text-left text-sm text-zinc-400">
                                 <th class="pb-3 font-medium">Time</th>
                                 <th class="pb-3 font-medium">Location</th>
@@ -202,19 +202,19 @@
                         </thead>
                         <tbody class="text-sm">
                             {#each data.clicks.slice(0, 50) as click}
-                                <tr class="border-b border-zinc-800/50 hover:bg-zinc-800/30">
-                                    <td class="py-3 text-zinc-300">
+                                <tr class="border-b dark:border-zinc-800/50 dark:hover:bg-zinc-800/30">
+                                    <td class="py-3 dark:text-zinc-300">
                                         {new Date(click.clicked_at).toLocaleString()}
                                     </td>
                                     <td class="py-3">
-                                        <span class="text-zinc-300">
+                                        <span class="dark:text-zinc-300">
                                             {click.city ? `${click.city}, ` : ''}{click.country || 'Unknown'}
                                         </span>
                                     </td>
-                                    <td class="py-3 text-zinc-300 capitalize">{click.device || 'Unknown'}</td>
-                                    <td class="py-3 text-zinc-300">{click.os || 'Unknown'}</td>
-                                    <td class="py-3 text-zinc-300">{click.browser || 'Unknown'}</td>
-                                    <td class="py-3 text-zinc-400 text-xs truncate max-w-xs">
+                                    <td class="py-3 dark:text-zinc-300 capitalize">{click.device || 'Unknown'}</td>
+                                    <td class="py-3 dark:text-zinc-300">{click.os || 'Unknown'}</td>
+                                    <td class="py-3 dark:text-zinc-300">{click.browser || 'Unknown'}</td>
+                                    <td class="py-3 dark:text-zinc-400 text-xs truncate max-w-xs">
                                         {#if click.referrer}
                                             <a href={click.referrer} target="_blank" rel="noopener noreferrer" class="hover:text-blue-400">
                                                 {new URL(click.referrer).hostname}
@@ -229,7 +229,7 @@
                     </table>
                 </div>
             {:else}
-                <p class="text-zinc-400 text-center py-8">No clicks yet</p>
+                <p class="dark:text-zinc-400 text-center py-8">No clicks yet</p>
             {/if}
         </div>
     </div>

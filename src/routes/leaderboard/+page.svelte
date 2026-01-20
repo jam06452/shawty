@@ -67,16 +67,16 @@
         </div>
 
         <!-- Info Box -->
-        <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-6">
+        <div class="bg-blue-600/15 dark:bg-blue-500/10 border border-blue-500/35 dark:border-blue-500/20 rounded-xl p-6">
             <div class="flex items-start gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400 shrink-0 mt-0.5">
                     <circle cx="12" cy="12" r="10"></circle>
                     <line x1="12" y1="16" x2="12" y2="12"></line>
                     <line x1="12" y1="8" x2="12.01" y2="8"></line>
                 </svg>
-                <div class="text-sm text-blue-300">
+                <div class="text-sm text-blue-500 dark:text-blue-300">
                     <p class="font-medium mb-1">How to join the leaderboard?</p>
-                    <p class="text-blue-300/80">Go to your dashboard, click the menu on any link, and toggle "Show on Leaderboard" to make your link public!</p>
+                    <p class="text-blue-500/80 dark:text-blue-300/80">Go to your dashboard, click the menu on any link, and toggle "Show on Leaderboard" to make your link public!</p>
                 </div>
             </div>
         </div>

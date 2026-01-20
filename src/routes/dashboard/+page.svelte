@@ -1,10 +1,15 @@
 <script lang="ts">
     import type { ActionData, PageData } from './$types';
+    import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
+    import Button from "$lib/components/ui/button/button.svelte";
+    import ChartNoAxesColumn from "@lucide/svelte/icons/chart-no-axes-column";
+    import QrCode from "@lucide/svelte/icons/qr-code";
+    import Pencil from "@lucide/svelte/icons/pencil";
+    import Trophy from "@lucide/svelte/icons/trophy";
+    import Trash2 from "@lucide/svelte/icons/trash-2";
+    import Ellipsis from "@lucide/svelte/icons/ellipsis";
 
     let { data, form }: { data: PageData; form: ActionData } = $props();
-    
-    // Track which link's menu is open
-    let openMenuId = $state<string | null>(null);
     
     // Track which QR code is being shown
     let showQrId = $state<string | null>(null);
@@ -16,13 +21,8 @@
     // Show advanced options
     let showAdvanced = $state<boolean>(false);
     
-    function toggleMenu(linkId: string) {
-        openMenuId = openMenuId === linkId ? null : linkId;
-    }
-    
     function showQr(linkId: string) {
         showQrId = linkId;
-        openMenuId = null;
     }
     
     function closeQr() {
@@ -32,32 +32,19 @@
     function startEdit(linkId: string, currentUrl: string) {
         editingId = linkId;
         editUrl = currentUrl;
-        openMenuId = null;
     }
     
     function cancelEdit() {
         editingId = null;
         editUrl = '';
     }
-    
-    // Close menu when clicking outside
-    function handleClickOutside(event: MouseEvent) {
-        if (openMenuId !== null) {
-            const target = event.target as HTMLElement;
-            if (!target.closest('.menu-container')) {
-                openMenuId = null;
-            }
-        }
-    }
 </script>
-
-<svelte:window onclick={handleClickOutside} />
 
 <div class="p-6">
     <div class="max-w-3xl mx-auto space-y-8">
 
         <!-- Shorten Card -->
-        <div class="bg-zinc-900 rounded-2xl shadow-lg p-6 space-y-4">
+        <div class="dark:bg-zinc-900 rounded-2xl border-gray-300 dark:border-zinc-800 border shadow-sm p-6 space-y-4">
             <h2 class="text-xl font-semibold">Shorten a link</h2>
             <form method="POST" action="?/create" class="space-y-4">
                 <div class="flex gap-3">
@@ -65,18 +52,18 @@
                         name="url"
                         placeholder="example.com or https://example.com"
                         required
-                        class="flex-1 rounded-xl bg-zinc-800 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-white/20"
+                        class="flex-1 rounded-xl dark:bg-zinc-800 border-gray-300 dark:border-zinc-800 border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-white/20"
                     />
-                    <button type="submit" class="px-6 py-3 rounded-xl bg-white text-zinc-900 font-medium hover:bg-zinc-200">
+                    <Button type="submit" variant="default" class="px-6 rounded-xl font-medium h-12.5">
                         Shorten
-                    </button>
+                    </Button>
                 </div>
                 
                 <!-- Advanced Options Toggle -->
                 <button 
                     type="button"
                     onclick={() => showAdvanced = !showAdvanced}
-                    class="text-sm text-zinc-400 hover:text-white flex items-center gap-2"
+                    class="text-sm text-zinc-700 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-white flex items-center gap-2"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="transition-transform {showAdvanced ? 'rotate-180' : ''}">
                         <polyline points="6 9 12 15 18 9"></polyline>
@@ -87,18 +74,18 @@
                 {#if showAdvanced}
                     <div class="space-y-3 pt-2">
                         <div>
-                            <label for="customSlug" class="block text-sm font-medium mb-2 text-zinc-300">
+                            <label for="customSlug" class="block text-sm font-medium mb-2 dark:text-zinc-300">
                                 Custom Slug (optional)
                             </label>
                             <div class="flex items-center gap-2">
-                                <span class="text-sm text-zinc-400">vejas.site/</span>
+                                <span class="text-sm dark:text-zinc-400">vejas.site/</span>
                                 <input
                                     id="customSlug"
                                     name="customSlug"
                                     type="text"
                                     pattern="[a-zA-Z0-9-]{20}"
                                     placeholder="my-custom-link"
-                                    class="flex-1 rounded-xl bg-zinc-800 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    class="flex-1 rounded-xl border border-gray-300 dark:bg-zinc-800 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 />
                             </div>
                             <p class="text-xs text-zinc-500 mt-1">3-20 characters: letters, numbers, and hyphens only</p>
@@ -106,11 +93,11 @@
                     </div>
                 {/if}
                 
-                <p class="text-xs text-zinc-400">
+                <p class="text-xs dark:text-zinc-400">
                     {#if showAdvanced}
                         Leave custom slug empty for a random short link
                     {:else}
-                        Your short link will look like: <span class="text-zinc-200">vejas.site/abc123</span>
+                        Your short link will look like: <span class="dark:text-zinc-200">vejas.site/abc123</span>
                     {/if}
                 </p>
             </form>
@@ -124,27 +111,27 @@
         {/if}
 
         {#if form?.success && form?.shortCode}
-            <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-6 text-center">
-                <p class="text-lg text-emerald-400 mb-3">✅ Short link created!</p>
-                <a href="/{form.shortCode}" class="text-xl font-medium text-white hover:underline">
+            <div class="bg-emerald-500/30 border border-emerald-500/40 rounded-xl p-6 text-center">
+                <p class="text-lg text-emerald-600 dark:text-emerald-400 mb-3">✅ Short link created!</p>
+                <a href="/{form.shortCode}" class="text-xl font-medium hover:underline">
                     {typeof window !== 'undefined' ? window.location.origin : 'https://vejas.site'}/{form.shortCode}
                 </a>
             </div>
         {/if}
 
         {#if form?.updated}
-            <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-emerald-400">
+            <div class="bg-emerald-500/10 border-emerald-500/20 dark:bg-emerald-500/10 border dark:border-emerald-500/20 rounded-xl p-4 text-emerald-400">
                 ✅ Link updated successfully!
             </div>
         {/if}
 
         <!-- Links Table -->
-        <div class="bg-zinc-900 rounded-2xl shadow-lg p-6">
+        <div class="dark:bg-zinc-900 rounded-2xl shadow-lg p-6">
             <h2 class="text-xl font-semibold mb-4">Your links</h2>
             {#if data.links && data.links.length > 0}
                 <div class="space-y-3">
                     {#each data.links as link}
-                        <div class="flex items-center justify-between rounded-xl bg-zinc-800 px-4 py-3">
+                        <div class="flex items-center justify-between rounded-xl border border-gray-300 dark:border-zinc-800 dark:bg-zinc-800 px-4 py-3">
                             <div class="flex flex-col min-w-0 flex-1">
                                 <div class="flex items-center gap-2">
                                     <a href="/{link.short_code}" class="text-sm font-medium text-blue-400 hover:underline">
@@ -192,61 +179,52 @@
                                     Copy
                                 </button>
                                 
-                                <!-- Menu Button -->
-                                <div class="relative menu-container">
-                                    <button onclick={() => toggleMenu(link.id)} class="w-8 h-8 rounded-lg bg-zinc-700/50 hover:bg-zinc-700 flex items-center justify-center transition-colors" aria-label="More options">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                            <circle cx="12" cy="5" r="2"></circle>
-                                            <circle cx="12" cy="12" r="2"></circle>
-                                            <circle cx="12" cy="19" r="2"></circle>
-                                        </svg>
-                                    </button>
-                                    
-                                    <!-- Dropdown Menu -->
-                                    {#if openMenuId === link.id}
-                                        <div class="absolute right-0 mt-2 w-56 bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg py-1 z-10">
-                                            <a href="/dashboard/analytics/{link.id}" class="w-full px-4 py-2 text-left text-sm hover:bg-zinc-700 flex items-center gap-3">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                                                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                                                    <line x1="6" y1="20" x2="6" y2="14"></line>
-                                                </svg>
+                                <!-- Dropdown Menu -->
+                                <DropdownMenu.Root>
+                                <DropdownMenu.Trigger class="w-8 h-8 rounded-lg border border-gray-200 hover:bg-gray-200 dark:border-zinc-800 dark:bg-zinc-700/50 dark:hover:bg-zinc-700 flex items-center justify-center transition-colors">
+                                    <Ellipsis class="h-4 w-4" />
+                                    <span class="sr-only">More actions</span>
+                                </DropdownMenu.Trigger>
+                                    <DropdownMenu.Content align="start" class="w-auto">
+                                        <DropdownMenu.Label class="text-xs font-medium">
+                                            Actions
+                                        </DropdownMenu.Label>
+                                        <DropdownMenu.Separator />
+                                        
+                                        <!-- View Analytics -->
+                                        <a href="/dashboard/analytics/{link.id}" class="contents">
+                                            <DropdownMenu.Item class="cursor-pointer">
+                                                <ChartNoAxesColumn class="mr-2 h-4 w-4" />
                                                 View Analytics
-                                            </a>
-                                            
-                                            <button onclick={() => showQr(link.id)} class="w-full px-4 py-2 text-left text-sm hover:bg-zinc-700 flex items-center gap-3">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                    <rect x="3" y="3" width="7" height="7"></rect>
-                                                    <rect x="14" y="3" width="7" height="7"></rect>
-                                                    <rect x="14" y="14" width="7" height="7"></rect>
-                                                    <rect x="3" y="14" width="7" height="7"></rect>
-                                                </svg>
+                                            </DropdownMenu.Item>
+                                        </a>
+                                        
+                                        <!-- Show QR Code -->
+                                        <button type="button" class="contents" onclick={() => showQr(link.id)}>
+                                            <DropdownMenu.Item class="cursor-pointer">
+                                                <QrCode class="mr-2 h-4 w-4" />
                                                 Show QR Code
-                                            </button>
-                                            
-                                            <button onclick={() => startEdit(link.id, link.long_url)} class="w-full px-4 py-2 text-left text-sm hover:bg-zinc-700 flex items-center gap-3">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                                                </svg>
+                                            </DropdownMenu.Item>
+                                        </button>
+                                        
+                                        <!-- Edit Destination -->
+                                        <button type="button" class="contents" onclick={() => startEdit(link.id, link.long_url)}>
+                                            <DropdownMenu.Item class="cursor-pointer">
+                                                <Pencil class="mr-2 h-4 w-4" />
                                                 Edit Destination
-                                            </button>
-                                            
-                                            <div class="border-t border-zinc-700 my-1"></div>
-                                            
-                                            <!-- Toggle Leaderboard -->
-                                            <form method="POST" action="?/toggleLeaderboard" class="w-full">
-                                                <input type="hidden" name="linkId" value={link.id} />
-                                                <input type="hidden" name="currentStatus" value={link.on_leaderboard} />
-                                                <button type="submit" class="w-full px-4 py-2 text-left text-sm hover:bg-zinc-700 flex items-center justify-between gap-3">
-                                                    <div class="flex items-center gap-3">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-400">
-                                                            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
-                                                            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
-                                                            <path d="M4 22h16"></path>
-                                                            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
-                                                            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
-                                                            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
-                                                        </svg>
+                                            </DropdownMenu.Item>
+                                        </button>
+                                        
+                                        <DropdownMenu.Separator />
+                                        
+                                        <!-- Toggle Leaderboard -->
+                                        <form method="POST" action="?/toggleLeaderboard" class="contents">
+                                            <input type="hidden" name="linkId" value={link.id} />
+                                            <input type="hidden" name="currentStatus" value={link.on_leaderboard} />
+                                            <button type="submit" class="contents">
+                                                <DropdownMenu.Item class="cursor-pointer justify-between">
+                                                    <div class="flex items-start">
+                                                        <Trophy class="mr-2 h-4 w-4 text-yellow-400" />
                                                         <span>Show on Leaderboard</span>
                                                     </div>
                                                     <div class="relative w-10 h-5 rounded-full transition-colors {link.on_leaderboard ? 'bg-emerald-500' : 'bg-zinc-600'}">
@@ -254,24 +232,35 @@
                                                             <div class="w-4 h-4 rounded-full bg-white"></div>
                                                         </div>
                                                     </div>
-                                                </button>
-                                            </form>
-                                            
-                                            <div class="border-t border-zinc-700 my-1"></div>
-                                            
-                                            <form method="POST" action="?/delete" class="w-full">
-                                                <input type="hidden" name="linkId" value={link.id} />
-                                                <button type="submit" class="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-zinc-700 flex items-center gap-3">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                        <polyline points="3 6 5 6 21 6"></polyline>
-                                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                                    </svg>
+                                                </DropdownMenu.Item>
+                                            </button>
+                                        </form>
+                                        
+                                        <DropdownMenu.Separator />
+                                        
+                                        <!-- Delete -->
+                                        <form method="POST" action="?/delete" class="contents">
+                                            <input type="hidden" name="linkId" value={link.id} />
+                                            <button
+                                                type="button"
+                                                class="contents"
+                                                onclick={(e) => {
+                                                    if (confirm(`Delete "${link.short_code}"? This cannot be undone.`)) {
+                                                        const form = e.currentTarget?.parentElement;
+                                                        if (form instanceof HTMLFormElement) {
+                                                            form.requestSubmit();
+                                                        }
+                                                    }
+                                                }}
+                                            >
+                                                <DropdownMenu.Item class="text-red-400 focus:text-red-400 cursor-pointer">
+                                                    <Trash2 class="mr-2 h-4 w-4" />
                                                     Delete
-                                                </button>
-                                            </form>
-                                        </div>
-                                    {/if}
-                                </div>
+                                                </DropdownMenu.Item>
+                                            </button>
+                                        </form>
+                                    </DropdownMenu.Content>
+                                </DropdownMenu.Root>
                             </div>
                         </div>
                     {/each}
@@ -299,7 +288,7 @@
                 aria-modal="true"
                 aria-labelledby="qr-modal-title"
                 tabindex="-1"
-                class="bg-zinc-900 rounded-2xl p-8 max-w-md w-full"
+                class="dark:bg-zinc-900 bg-zinc-200 rounded-2xl p-8 max-w-md w-full"
                 onclick={(e) => e.stopPropagation()}
                 onkeydown={(e) => e.stopPropagation()}
             >
@@ -308,7 +297,7 @@
                     <button 
                         onclick={closeQr}
                         aria-label="Close QR code modal"
-                        class="w-8 h-8 rounded-lg hover:bg-zinc-800 flex items-center justify-center transition-colors"
+                        class="w-8 h-8 rounded-lg hover:bg-zinc-300 dark:hover:bg-zinc-800 flex items-center justify-center transition-colors"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="18" y1="6" x2="6" y2="18"></line>

@@ -11,6 +11,10 @@
   	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
   	import { buttonVariants } from "$lib/components/ui/button/index.js";
 	let { children, data } = $props();
+
+	const commitHash = __GIT_COMMIT_HASH__;
+    const repoUrl = __GITHUB_REPO_URL__;
+    const commitUrl = `${repoUrl}/commit/${commitHash}`;
 </script>
 
 <svelte:head>
@@ -88,8 +92,20 @@
 			</div>
 
 			<!-- Bottom bar -->
-			<div class="flex justify-between mt-8 pt-6 border-t border-amber-50 dark:border-zinc-800 text-center text-sm text-zinc-400">
-				<p>&copy; {new Date().getFullYear()} shawty. Built with ❤️ by <a href="https://vejas.zip" class="text-decoration-underline">Vejas</a></p>
+			<div class="flex justify-between items-center mt-8 pt-6 border-t border-amber-50 dark:border-zinc-800 text-center text-sm text-zinc-400">
+				<div class="flex items-center gap-3">
+					<p>&copy; {new Date().getFullYear()} shawty. Built with ❤️ by <a href="https://vejas.zip" class="text-decoration-underline">Vejas</a></p>
+					<span class="text-zinc-600">•</span>
+					<a 
+                        href={commitUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="text-xs text-zinc-500 hover:text-zinc-400 transition-colors font-mono"
+                        title="View commit on GitHub"
+                    >
+                        built from {commitHash}
+                    </a>
+				</div>
 
 				<DropdownMenu.Root>
   				<DropdownMenu.Trigger class={buttonVariants({ variant: "outline", size: "icon" })}>
