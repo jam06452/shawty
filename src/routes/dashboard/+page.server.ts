@@ -1,6 +1,7 @@
 import { supabase } from '$lib/supabase';
-import { redirect, fail } from '@sveltejs/kit';
+import { redirect, fail, error } from '@sveltejs/kit';
 import { PUBLIC_URL } from '$env/static/public';
+import { SLACK_WEBHOOK_URL } from '$env/static/private';
 
 // Get the hostname from PUBLIC_URL to block self-referencing links
 const getHostname = (url: string): string | null => {
@@ -26,6 +27,81 @@ const validateUrlNotSelfReferencing = (url: string): boolean => {
     return !BLOCKED_HOSTNAMES.some(blocked => 
         hostname === blocked || hostname.endsWith(`.${blocked}`)
     );
+};
+
+// Send Slack notification
+const sendSlackAlert = async (user: any, attemptedUrl: string, action: 'create' | 'update') => {
+    if (!SLACK_WEBHOOK_URL) {
+        console.warn('SLACK_WEBHOOK_URL not configured, skipping Slack notification');
+        return;
+    }
+
+    const displayName = user.first_name && user.last_name 
+        ? `${user.first_name} ${user.last_name}` 
+        : user.name || user.email;
+
+    const slackMention = user.slack_id ? `<@${user.slack_id}>` : displayName;
+
+    const message = {
+        text: `🚨 Loop Protection Alert`,
+        blocks: [
+            {
+                type: "header",
+                text: {
+                    type: "plain_text",
+                    text: "🚨 Attempted Self-Referencing Link",
+                    emoji: true
+                }
+            },
+            {
+                type: "section",
+                fields: [
+                    {
+                        type: "mrkdwn",
+                        text: `*User:*\n${slackMention}`
+                    },
+                    {
+                        type: "mrkdwn",
+                        text: `*Action:*\n${action === 'create' ? 'Create new link' : 'Update existing link'}`
+                    },
+                    {
+                        type: "mrkdwn",
+                        text: `*Email:*\n${user.email || 'N/A'}`
+                    },
+                    {
+                        type: "mrkdwn",
+                        text: `*Slack ID:*\n${user.slack_id || 'N/A'}`
+                    }
+                ]
+            },
+            {
+                type: "section",
+                text: {
+                    type: "mrkdwn",
+                    text: `*Attempted URL:*\n\`${attemptedUrl}\``
+                }
+            },
+            {
+                type: "context",
+                elements: [
+                    {
+                        type: "mrkdwn",
+                        text: `Blocked at ${new Date().toISOString()}`
+                    }
+                ]
+            }
+        ]
+    };
+
+    try {
+        await fetch(SLACK_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(message)
+        });
+    } catch (err) {
+        console.error('Failed to send Slack notification:', err);
+    }
 };
 
 export const load = async ({ locals }) => {
@@ -66,7 +142,10 @@ export const actions = {
 
         // Prevent self-referencing links (loop protection)
         if (!validateUrlNotSelfReferencing(url)) {
-            return fail(400, { error: 'Cannot create shortlinks that point to this domain (prevents infinite loops)' });
+            // Send Slack alert
+            await sendSlackAlert(locals.user, url, 'create');
+            // Throw 404 error
+            throw error(404, 'Cannot create shortlinks that point to this domain');
         }
 
         // Handle custom slug
@@ -98,7 +177,7 @@ export const actions = {
         }
 
         // Insert into database
-        const { error } = await supabase.from('links').insert({
+        const { error: dbError } = await supabase.from('links').insert({
             short_code: shortCode,
             long_url: url,
             user_id: locals.user.id,
@@ -107,9 +186,9 @@ export const actions = {
             custom_slug: isCustom,
         });
 
-        if (error) {
-            console.error('Database error:', error);
-            if (error.code === '23505') { // Unique constraint violation
+        if (dbError) {
+            console.error('Database error:', dbError);
+            if (dbError.code === '23505') { // Unique constraint violation
                 return fail(400, { error: 'This slug is already taken' });
             }
             return fail(500, { error: 'Failed to create short link' });
@@ -145,17 +224,20 @@ export const actions = {
 
         // Prevent self-referencing links (loop protection)
         if (!validateUrlNotSelfReferencing(newUrl)) {
-            return fail(400, { error: 'Cannot update to a URL that points to this domain (prevents infinite loops)' });
+            // Send Slack alert
+            await sendSlackAlert(locals.user, newUrl, 'update');
+            // Throw 404 error
+            throw error(404, 'Cannot update to a URL that points to this domain');
         }
 
-        const { error } = await supabase
+        const { error: dbError } = await supabase
             .from('links')
             .update({ long_url: newUrl })
             .eq('id', linkId)
             .eq('user_id', locals.user.id);
 
-        if (error) {
-            console.error('Database error:', error);
+        if (dbError) {
+            console.error('Database error:', dbError);
             return fail(500, { error: 'Failed to update link' });
         }
 
@@ -173,14 +255,14 @@ export const actions = {
             return fail(400, { error: 'Link ID is required' });
         }
 
-        const { error } = await supabase
+        const { error: dbError } = await supabase
             .from('links')
             .update({ on_leaderboard: !currentStatus })
             .eq('id', linkId)
             .eq('user_id', locals.user.id);
 
-        if (error) {
-            console.error('Database error:', error);
+        if (dbError) {
+            console.error('Database error:', dbError);
             return fail(500, { error: 'Failed to update leaderboard status' });
         }
 
@@ -197,14 +279,14 @@ export const actions = {
             return fail(400, { error: 'Link ID is required' });
         }
 
-        const { error } = await supabase
+        const { error: dbError } = await supabase
             .from('links')
             .delete()
             .eq('id', linkId)
             .eq('user_id', locals.user.id);
 
-        if (error) {
-            console.error('Database error:', error);
+        if (dbError) {
+            console.error('Database error:', dbError);
             return fail(500, { error: 'Failed to delete link' });
         }
 

@@ -13,7 +13,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     // Fetch user from database
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, email, name, first_name, last_name')
+      .select('id, email, name, first_name, last_name, slack_id')
       .eq('id', sessionId)
       .single();
 
@@ -28,7 +28,8 @@ export const handle: Handle = async ({ event, resolve }) => {
         email: user.email, 
         name: user.name,
         first_name: user.first_name,
-        last_name: user.last_name
+        last_name: user.last_name,
+        slack_id: user.slack_id
       };
     } else {
       console.log(`[HOOKS] No user found for session ID`);
