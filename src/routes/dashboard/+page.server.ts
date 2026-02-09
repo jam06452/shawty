@@ -1,5 +1,32 @@
 import { supabase } from '$lib/supabase';
 import { redirect, fail } from '@sveltejs/kit';
+import { PUBLIC_URL } from '$env/static/public';
+
+// Get the hostname from PUBLIC_URL to block self-referencing links
+const getHostname = (url: string): string | null => {
+    try {
+        return new URL(url).hostname.toLowerCase();
+    } catch {
+        return null;
+    }
+};
+
+const BLOCKED_HOSTNAMES = [
+    getHostname(PUBLIC_URL), // e.g., vejas.site
+    'vejas.site',
+    'www.vejas.site',
+].filter(Boolean) as string[];
+
+// Validate that URL doesn't point to our own domain (prevents loops)
+const validateUrlNotSelfReferencing = (url: string): boolean => {
+    const hostname = getHostname(url);
+    if (!hostname) return false;
+    
+    // Check if hostname matches any blocked hostname
+    return !BLOCKED_HOSTNAMES.some(blocked => 
+        hostname === blocked || hostname.endsWith(`.${blocked}`)
+    );
+};
 
 export const load = async ({ locals }) => {
     if (!locals.user) throw redirect(302, '/login');
@@ -35,6 +62,11 @@ export const actions = {
             new URL(url);
         } catch {
             return fail(400, { error: 'Invalid URL format' });
+        }
+
+        // Prevent self-referencing links (loop protection)
+        if (!validateUrlNotSelfReferencing(url)) {
+            return fail(400, { error: 'Cannot create shortlinks that point to this domain (prevents infinite loops)' });
         }
 
         // Handle custom slug
@@ -109,6 +141,11 @@ export const actions = {
             new URL(newUrl);
         } catch {
             return fail(400, { error: 'Invalid URL format' });
+        }
+
+        // Prevent self-referencing links (loop protection)
+        if (!validateUrlNotSelfReferencing(newUrl)) {
+            return fail(400, { error: 'Cannot update to a URL that points to this domain (prevents infinite loops)' });
         }
 
         const { error } = await supabase
