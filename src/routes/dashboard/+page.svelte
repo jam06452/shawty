@@ -72,7 +72,7 @@
                 </button>
                 
                 {#if showAdvanced}
-                    <div class="space-y-3 pt-2">
+                    <div class="space-y-4 pt-2">
                         <div>
                             <label for="customSlug" class="block text-sm font-medium mb-2 dark:text-zinc-300">
                                 Custom Slug (optional)
@@ -85,10 +85,23 @@
                                     type="text"
                                     pattern="[a-zA-Z0-9-]{20}"
                                     placeholder="my-custom-link"
-                                    class="flex-1 rounded-xl border border-gray-300 dark:bg-zinc-800 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                />
+                                    class="flex-1 rounded-xl border border-gray-300 dark:bg-zinc-800 dark:border-zinc-800 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-white/20"
+                                />  
                             </div>
-                            <p class="text-xs text-zinc-500 mt-1">3-20 characters: letters, numbers, and hyphens only</p>
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">3-20 characters: letters, numbers, and hyphens only</p>
+                        </div>
+                        <div>
+                            <label for="password" class="block text-sm font-medium mb-2 dark:text-zinc-300">
+                                Password Protection (optional)
+                            </label>
+                            <input 
+                                id="password"
+                                type="password" 
+                                name="password" 
+                                placeholder="Leave empty for no password" 
+                                class="w-full rounded-xl border border-gray-300 dark:bg-zinc-800 dark:border-zinc-800 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-white/20"
+                            />
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Visitors will need this password to access the link</p>
                         </div>
                     </div>
                 {/if}

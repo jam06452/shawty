@@ -176,6 +176,8 @@ export const actions = {
             shortCode = Math.random().toString(36).substring(2, 8);
         }
 
+        const password = formData.get('password')?.toString() || null;
+
         // Insert into database
         const { error: dbError } = await supabase.from('links').insert({
             short_code: shortCode,
@@ -184,6 +186,7 @@ export const actions = {
             clicks: 0,
             on_leaderboard: false,
             custom_slug: isCustom,
+            password: password // Add this field
         });
 
         if (dbError) {

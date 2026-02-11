@@ -38,17 +38,24 @@ async function trackAnalytics(linkId: string, linkClicks: number, shortCode: str
   });
 }
 
-export const GET = async ({ params, request }) => {
+export const GET = async ({ params, request, cookies }) => {
   // Fetch link data only
   const { data: link, error: linkError } = await supabase
     .from('links')
-    .select('id, long_url, clicks')
+    .select('id, long_url, clicks, password')
     .eq('short_code', params.code)
     .single();
 
   if (linkError || !link) {
     console.error('Link not found:', linkError);
     return new Response('Not found', { status: 404 });
+  }
+
+  if (link.password) {
+    const verified = cookies.get(`verified_${params.code}`);
+    if (verified !== 'true') {
+      throw redirect(302, `/${params.code}/verify`);
+    }
   }
 
   // Start analytics tracking in background (don't await)
