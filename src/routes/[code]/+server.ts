@@ -2,7 +2,44 @@ import { supabase } from '$lib/supabase';
 import { redirect } from '@sveltejs/kit';
 import { parseUserAgent, getLocationFromIP, getClientIP } from '$lib/analytics';
 
+// Async function to track analytics without blocking the redirect
+async function trackAnalytics(linkId: string, linkClicks: number, shortCode: string, userAgent: string, referrer: string | undefined, ip: string) {
+  const { device, os, browser } = parseUserAgent(userAgent);
+
+  // Get location with timeout
+  let location = { country: undefined, city: undefined };
+  try {
+    const locationPromise = getLocationFromIP(ip);
+    const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve({ country: undefined, city: undefined }), 1000));
+    location = await Promise.race([locationPromise, timeoutPromise]) as any;
+  } catch (error) {
+    console.error('Failed to get location:', error);
+  }
+
+  // Perform both database operations in parallel
+  await Promise.all([
+    supabase.from('link_clicks').insert({
+      link_id: linkId,
+      ip_address: ip,
+      country: location.country || null,
+      city: location.city || null,
+      device,
+      os,
+      browser,
+      user_agent: userAgent,
+      referrer: referrer || null
+    }),
+    supabase
+      .from('links')
+      .update({ clicks: linkClicks + 1 })
+      .eq('short_code', shortCode)
+  ]).catch(error => {
+    console.error('Failed to track analytics:', error);
+  });
+}
+
 export const GET = async ({ params, request }) => {
+  // Fetch link data only
   const { data: link, error: linkError } = await supabase
     .from('links')
     .select('id, long_url, clicks')
@@ -14,49 +51,13 @@ export const GET = async ({ params, request }) => {
     return new Response('Not found', { status: 404 });
   }
 
-  // Parse user agent
+  // Start analytics tracking in background (don't await)
   const userAgent = request.headers.get('user-agent') || '';
   const referrer = request.headers.get('referer') || undefined;
   const ip = getClientIP(request);
+  
+  trackAnalytics(link.id, link.clicks, params.code, userAgent, referrer, ip);
 
-  const { device, os, browser } = parseUserAgent(userAgent);
-
-  // Get location (with timeout to avoid blocking redirect)
-  let location = { country: undefined, city: undefined };
-  try {
-    const locationPromise = getLocationFromIP(ip);
-    const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve({ country: undefined, city: undefined }), 2000));
-    location = await Promise.race([locationPromise, timeoutPromise]) as any;
-  } catch (error) {
-    console.error('Failed to get location:', error);
-  }
-
-  // Insert click record
-  const { error: clickError } = await supabase.from('link_clicks').insert({
-    link_id: link.id,
-    ip_address: ip,
-    country: location.country || null,
-    city: location.city || null,
-    device,
-    os,
-    browser,
-    user_agent: userAgent,
-    referrer: referrer || null
-  });
-
-  if (clickError) {
-    console.error('Failed to insert click:', clickError);
-  }
-
-  // Update click count
-  const { error: updateError } = await supabase
-    .from('links')
-    .update({ clicks: link.clicks + 1 })
-    .eq('short_code', params.code);
-
-  if (updateError) {
-    console.error('Failed to update clicks:', updateError);
-  }
-
+  // Redirect immediately
   throw redirect(302, link.long_url);
 };

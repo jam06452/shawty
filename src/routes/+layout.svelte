@@ -28,7 +28,7 @@
         const scroll = () => {
             isScrolling = true;
             let scrollCount = 0;
-            const maxScrolls = 15; // Fast scroll through ~30 emojis
+            const maxScrolls = 15;
             
             const scrollInterval = setInterval(() => {
                 emojiIndex = (emojiIndex + 1) % emojis.length;
@@ -46,10 +46,9 @@
                         scroll();
                     }, 15000);
                 }
-            }, 100); // Change every 100ms for fast scrolling effect
+            }, 100);
         };
         
-        // Start the first scroll
         scroll();
     });
 </script>
