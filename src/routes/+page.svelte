@@ -10,6 +10,79 @@
     import Chart from "@lucide/svelte/icons/chart-no-axes-combined"
     import Lock from "@lucide/svelte/icons/lock"
     import Laptop from "@lucide/svelte/icons/laptop"
+    import { onMount } from 'svelte';
+    import gsap from 'gsap';
+
+    onMount(() => {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+        const originalText = 'Secure';
+        const element = document.getElementById('securitytext');
+        
+        if (element) {
+            const scramble = () => {
+                let iteration = 0;
+                const interval = setInterval(() => {
+                    element.innerText = originalText
+                        .split('')
+                        .map((char, index) => {
+                            if (index < iteration) {
+                                return originalText[index];
+                            }
+                            return chars[Math.floor(Math.random() * chars.length)];
+                        })
+                        .join('');
+                    
+                    if (iteration >= originalText.length) {
+                        clearInterval(interval);
+                    }
+                    iteration += 1 / 3;
+                }, 30);
+            };
+            
+            // Initial scramble on load
+            scramble();
+            
+            // Scramble on hover
+            const parent = element.parentElement;
+            if (parent) {
+                parent.addEventListener('mouseenter', scramble);
+            }
+        }
+
+        // Hack rhyming words scramble effect
+        const hackElement = document.getElementById('hacktext');
+        const rhymingWords = ['hack', 'back', 'pack', 'stack', 'track', 'snack', 'slack', 'crack'];
+        let currentIndex = 0;
+        
+        if (hackElement) {
+            const scrambleToNext = () => {
+                const nextIndex = (currentIndex + 1) % rhymingWords.length;
+                const targetWord = rhymingWords[nextIndex];
+                let iteration = 0;
+                
+                const interval = setInterval(() => {
+                    hackElement.innerText = targetWord
+                        .split('')
+                        .map((char, index) => {
+                            if (index < iteration) {
+                                return targetWord[index];
+                            }
+                            return chars[Math.floor(Math.random() * chars.length)].toLowerCase();
+                        })
+                        .join('');
+                    
+                    if (iteration >= targetWord.length) {
+                        clearInterval(interval);
+                        currentIndex = nextIndex;
+                    }
+                    iteration += 1 / 3;
+                }, 50);
+            };
+            
+            // Change word every 3 seconds
+            setInterval(scrambleToNext, 3000);
+        }
+    });
 </script>
 
 <div class="relative overflow-hidden">
@@ -62,7 +135,7 @@
                     </div>
                     <div class="space-y-1">
                         <p class="text-3xl font-bold">🔒</p>
-                        <p class="text-sm dark:text-zinc-400 text-zinc-700">Secure</p>
+                        <p id="securitytext" class="text-sm dark:text-zinc-400 text-zinc-700">Secure</p>
                     </div>
                 </div>
         </div>
@@ -92,7 +165,7 @@
                     
                     <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-center">
                         <p class="text-emerald-400 mb-2">✨ Shortened successfully!</p>
-                        <p class="text-2xl font-mono text-white">vejas.site/hack</p>
+                        <p class="text-2xl font-mono text-white">vejas.site/<span id="hacktext">hack</span></p>
                     </div>
                 </div>
             </div>
