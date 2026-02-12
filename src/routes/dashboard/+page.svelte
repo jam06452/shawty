@@ -135,7 +135,7 @@
                                 Custom Slug (optional)
                             </label>
                             <div class="flex items-center gap-2">
-                                <span class="text-sm dark:text-zinc-400">www.shawty.app/</span>
+                                <span class="text-sm dark:text-zinc-400">shawty.app/</span>
                                 <input
                                     id="customSlug"
                                     bind:value={customSlugInput}
@@ -169,7 +169,7 @@
                     {#if showAdvanced}
                         Leave custom slug empty for a random short link
                     {:else}
-                        Your short link will look like: <span class="dark:text-zinc-200">www.shawty.app/abc123</span>
+                        Your short link will look like: <span class="dark:text-zinc-200">shawty.app/abc123</span>
                     {/if}
                 </p>
             </div>
@@ -186,7 +186,7 @@
             <div class="bg-emerald-500/30 border border-emerald-500/40 rounded-xl p-6 text-center">
                 <p class="text-lg text-emerald-600 dark:text-emerald-400 mb-3">✅ {apiMessage.text}</p>
                 <a href="/{apiMessage.shortCode}" class="text-xl font-medium hover:underline">
-                    {typeof window !== 'undefined' ? window.location.origin : 'https://www.shawty.app'}/{apiMessage.shortCode}
+                    {typeof window !== 'undefined' ? window.location.origin : 'https://shawty.app'}/{apiMessage.shortCode}
                 </a>
             </div>
         {/if}
@@ -207,7 +207,7 @@
                             <div class="flex flex-col min-w-0 flex-1">
                                 <div class="flex items-center gap-2">
                                     <a href="/{link.short_code}" class="text-sm font-medium text-blue-400 hover:underline">
-                                        www.shawty.app/{link.short_code}
+                                        shawty.app/{link.short_code}
                                     </a>
                                     {#if link.custom_slug}
                                         <span class="text-xs px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
@@ -380,7 +380,7 @@
                 
                 <div class="bg-black p-6 rounded-xl flex items-center justify-center">
                     <img 
-                        src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={encodeURIComponent(`${typeof window !== 'undefined' ? window.location.origin : 'https://www.shawty.app'}/${link.short_code}`)}&color=ffffff&bgcolor=000000"
+                        src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={encodeURIComponent(`${typeof window !== 'undefined' ? window.location.origin : 'https://shawty.app'}/${link.short_code}`)}&color=ffffff&bgcolor=000000"
                         alt="QR Code for {link.short_code}"
                         class="w-64 h-64"
                     />

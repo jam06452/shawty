@@ -15,7 +15,7 @@ export default defineConfig({
     plugins: [sveltekit()],
     define: {
         __GIT_COMMIT_HASH__: JSON.stringify(getGitCommitHash()),
-        __GITHUB_REPO_URL__: JSON.stringify('https://github.com/las-vejas/shawty')
+        __GITHUB_REPO_URL__: JSON.stringify('shawty.app/a4eke8')
     },
     build: {
         minify: 'terser',

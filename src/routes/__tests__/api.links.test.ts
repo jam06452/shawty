@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock environment variables
 beforeEach(() => {
-	vi.stubEnv('PUBLIC_URL', 'https://www.shawty.app');
+	vi.stubEnv('PUBLIC_URL', 'https://shawty.app');
 });
 
 describe('POST /api/links - Link creation', () => {
@@ -56,7 +56,7 @@ describe('POST /api/links - Link creation', () => {
 	});
 
 	describe('Self-referencing URL Prevention', () => {
-		const PUBLIC_URL = 'https://www.shawty.app';
+		const PUBLIC_URL = 'https://shawty.app';
 
 		const getHostname = (url: string): string | null => {
 			try {
@@ -68,7 +68,7 @@ describe('POST /api/links - Link creation', () => {
 
 		const BLOCKED_HOSTNAMES = [
 			getHostname(PUBLIC_URL),
-			'www.shawty.app',
+			'shawty.app',
 			'shawty.app'
 		].filter(Boolean) as string[];
 
@@ -80,8 +80,8 @@ describe('POST /api/links - Link creation', () => {
 			);
 		};
 
-		it('should reject www.shawty.app URLs', () => {
-			const isValid = validateUrlNotSelfReferencing('https://www.shawty.app/some-link');
+		it('should reject shawty.app URLs', () => {
+			const isValid = validateUrlNotSelfReferencing('https://shawty.app/some-link');
 			expect(isValid).toBe(false);
 		});
 

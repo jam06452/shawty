@@ -10,8 +10,8 @@ export const getHostname = (url: string): string | null => {
 };
 
 export const BLOCKED_HOSTNAMES = [
-    getHostname(PUBLIC_URL), // e.g., www.shawty.app
-    'www.shawty.app',
+    getHostname(PUBLIC_URL), // e.g., shawty.app
+    'shawty.app',
     'shawty.app',
 ].filter(Boolean) as string[];
 
