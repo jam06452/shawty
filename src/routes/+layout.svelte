@@ -16,7 +16,7 @@
 
     const commitHash = __GIT_COMMIT_HASH__;
     const repoUrl = __GITHUB_REPO_URL__;
-    const commitUrl = `${repoUrl}/commit/${commitHash}`;
+    const commitUrl = `github.com/commit/${commitHash}`;
 
     let currentEmoji = $state('❤️');
     const emojis = ['☕', '💻', '🚀', '🔥', '💡', '🎉', '✨'];

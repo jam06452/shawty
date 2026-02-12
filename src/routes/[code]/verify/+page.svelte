@@ -1,8 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import { parseDuration } from '@internationalized/date';
   import type { ActionData } from './$types';
-  import gsap from 'gsap';
   import { onMount } from 'svelte';
 
   let { form }: { form: ActionData } = $props();
@@ -11,13 +9,16 @@
   
   onMount(() => {
     const finalText = "Password Protected Link";
-const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890±!@#$%^&*()_+";
+    const chars = "!@#$%^&*()_+-=[]{}|;:',.<>?/`~";
     let frame = 0;
     
     const animate = () => {
       headingRef.innerText = finalText
         .split("")
-        .map((char, i) => (i < frame ? char : chars[Math.floor(Math.random() * chars.length)]))
+        .map((char, i) => {
+          if (i < frame) return char;
+          return chars[Math.floor(Math.random() * chars.length)];
+        })
         .join("");
       
       frame += 1/3;

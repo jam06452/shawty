@@ -2,15 +2,19 @@ import { supabase } from '$lib/supabase';
 import { redirect } from '@sveltejs/kit';
 import { parseUserAgent, getLocationFromIP, getClientIP } from '$lib/analytics';
 
+// Simple in-memory cache (resets on deploy, but that's fine)
+const linkCache = new Map<string, { long_url: string, password: string | null, id: string, clicks: number, timestamp: number }>();
+const CACHE_TTL = 60000; // 1 minute
+
 // Async function to track analytics without blocking the redirect
 async function trackAnalytics(linkId: string, linkClicks: number, shortCode: string, userAgent: string, referrer: string | undefined, ip: string) {
   const { device, os, browser } = parseUserAgent(userAgent);
 
-  // Get location with timeout
+  // Get location with timeout (reduced to 500ms)
   let location = { country: undefined, city: undefined };
   try {
     const locationPromise = getLocationFromIP(ip);
-    const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve({ country: undefined, city: undefined }), 1000));
+    const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve({ country: undefined, city: undefined }), 500));
     location = await Promise.race([locationPromise, timeoutPromise]) as any;
   } catch (error) {
     console.error('Failed to get location:', error);
@@ -39,18 +43,29 @@ async function trackAnalytics(linkId: string, linkClicks: number, shortCode: str
 }
 
 export const GET = async ({ params, request, cookies }) => {
-  // Fetch link data only
-  const { data: link, error: linkError } = await supabase
-    .from('links')
-    .select('id, long_url, clicks, password')
-    .eq('short_code', params.code)
-    .single();
+  const now = Date.now();
+  
+  // Check cache first
+  let link = linkCache.get(params.code);
+  if (!link || now - link.timestamp > CACHE_TTL) {
+    // Fetch from database - only select necessary fields
+    const { data, error: linkError } = await supabase
+      .from('links')
+      .select('id, long_url, clicks, password')
+      .eq('short_code', params.code)
+      .single();
 
-  if (linkError || !link) {
-    console.error('Link not found:', linkError);
-    return new Response('Not found', { status: 404 });
+    if (linkError || !data) {
+      console.error('Link not found:', linkError);
+      return new Response('Not found', { status: 404 });
+    }
+    
+    // Cache it
+    link = { ...data, timestamp: now };
+    linkCache.set(params.code, link);
   }
 
+  // Password check
   if (link.password) {
     const verified = cookies.get(`verified_${params.code}`);
     if (verified !== 'true') {
