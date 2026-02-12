@@ -1,51 +1,58 @@
 <script lang="ts">
     export let data;
     import Button from '$lib/components/ui/button/button.svelte';
+    import Link from "@lucide/svelte/icons/link";
+    import QrCode from "@lucide/svelte/icons/qr-code";
+    import Activity from "@lucide/svelte/icons/activity";
+    import Globe from "@lucide/svelte/icons/globe";
+    import Shield from "@lucide/svelte/icons/shield"
+    import Chart2 from "@lucide/svelte/icons/chart-no-axes-column"
+    import Chart from "@lucide/svelte/icons/chart-no-axes-combined"
+    import Lock from "@lucide/svelte/icons/lock"
+    import Laptop from "@lucide/svelte/icons/laptop"
+    import Infinity from "@lucide/svelte/icons/infinity"
+    import Zap from "@lucide/svelte/icons/zap"
     import { onMount } from 'svelte';
+    import gsap from 'gsap';
 
-    let securityElement: HTMLElement | null = null;
-    let hackElement: HTMLElement | null = null;
-    let hoverListener: ((e: MouseEvent) => void) | null = null;
-    let scrambleInterval: ReturnType<typeof setInterval> | null = null;
-
-    const startAnimations = () => {
+    onMount(() => {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
         const originalText = 'Secure';
-        securityElement = document.getElementById('securitytext');
+        const element = document.getElementById('securitytext');
         
-        if (securityElement) {
+        if (element) {
             const scramble = () => {
                 let iteration = 0;
                 const interval = setInterval(() => {
-                    if (securityElement) {
-                        securityElement.innerText = originalText
-                            .split('')
-                            .map((char, index) => {
-                                if (index < iteration) {
-                                    return originalText[index];
-                                }
-                                return chars[Math.floor(Math.random() * chars.length)];
-                            })
-                            .join('');
-                        
-                        if (iteration >= originalText.length) {
-                            clearInterval(interval);
-                        }
-                        iteration += 1 / 3;
+                    element.innerText = originalText
+                        .split('')
+                        .map((char, index) => {
+                            if (index < iteration) {
+                                return originalText[index];
+                            }
+                            return chars[Math.floor(Math.random() * chars.length)];
+                        })
+                        .join('');
+                    
+                    if (iteration >= originalText.length) {
+                        clearInterval(interval);
                     }
+                    iteration += 1 / 3;
                 }, 30);
             };
             
+            // Initial scramble on load
             scramble();
             
-            const parent = securityElement.parentElement;
+            // Scramble on hover
+            const parent = element.parentElement;
             if (parent) {
-                hoverListener = () => scramble();
-                parent.addEventListener('mouseenter', hoverListener);
+                parent.addEventListener('mouseenter', scramble);
             }
         }
 
-        hackElement = document.getElementById('hacktext');
+        // Hack rhyming words scramble effect
+        const hackElement = document.getElementById('hacktext');
         const rhymingWords = ['hack', 'back', 'pack', 'stack', 'track', 'snack', 'slack', 'crack'];
         let currentIndex = 0;
         
@@ -56,44 +63,27 @@
                 let iteration = 0;
                 
                 const interval = setInterval(() => {
-                    if (hackElement) {
-                        hackElement.innerText = targetWord
-                            .split('')
-                            .map((char, index) => {
-                                if (index < iteration) {
-                                    return targetWord[index];
-                                }
-                                return chars[Math.floor(Math.random() * chars.length)].toLowerCase();
-                            })
-                            .join('');
-                        
-                        if (iteration >= targetWord.length) {
-                            clearInterval(interval);
-                            currentIndex = nextIndex;
-                        }
-                        iteration += 1 / 3;
+                    hackElement.innerText = targetWord
+                        .split('')
+                        .map((char, index) => {
+                            if (index < iteration) {
+                                return targetWord[index];
+                            }
+                            return chars[Math.floor(Math.random() * chars.length)].toLowerCase();
+                        })
+                        .join('');
+                    
+                    if (iteration >= targetWord.length) {
+                        clearInterval(interval);
+                        currentIndex = nextIndex;
                     }
+                    iteration += 1 / 3;
                 }, 50);
             };
-
-            scrambleToNext();
-            scrambleInterval = setInterval(scrambleToNext, 3000);
+            
+            // Change word every 3 seconds
+            setInterval(scrambleToNext, 3000);
         }
-    };
-
-    onMount(() => {
-        // Defer animations to avoid blocking initial render
-        const timer = setTimeout(startAnimations, 0);
-        
-        return () => {
-            clearTimeout(timer);
-            if (scrambleInterval) {
-                clearInterval(scrambleInterval);
-            }
-            if (hoverListener && securityElement?.parentElement) {
-                securityElement.parentElement.removeEventListener('mouseenter', hoverListener);
-            }
-        };
     });
 </script>
 
@@ -137,16 +127,17 @@
 
             <!-- Stats -->
                 <div class="pt-12 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
-                    <div class="space-y-1">
-                        <p class="text-3xl font-bold">∞</p>
+                    <div class="flex flex-col space-y-4 items-center">
+
+                        <Infinity class=""/>
                         <p class="text-sm dark:text-zinc-400 text-zinc-700">Links Created</p>
                     </div>
-                    <div class="space-y-1">
-                        <p class="text-3xl font-bold">⚡</p>
+                    <div class="flex flex-col space-y-4 items-center">
+                        <Zap/>
                         <p class="text-sm dark:text-zinc-400 text-zinc-700">Lightning Fast</p>
                     </div>
-                    <div class="space-y-1">
-                        <p class="text-3xl font-bold">🔒</p>
+                    <div class="flex flex-col space-y-4 items-center">
+                        <Lock/>
                         <p id="securitytext" class="text-sm dark:text-zinc-400 text-zinc-700">Secure</p>
                     </div>
                 </div>
@@ -177,7 +168,7 @@
                     
                     <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-center">
                         <p class="text-emerald-400 mb-2">✨ Shortened successfully!</p>
-                        <p class="text-2xl font-mono text-white">www.shawty.app/<span id="hacktext">hack</span></p>
+                        <p class="text-2xl font-mono text-white">vejas.site/<span id="hacktext">hack</span></p>
                     </div>
                 </div>
             </div>
@@ -196,7 +187,7 @@
                 <!-- Feature 1 -->
                 <div class="dark:bg-zinc-900 rounded-2xl p-8 border dark:border-zinc-800 dark:hover:border-zinc-700 transition-colors">
                     <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-sky-400"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                        <Link color="currentColor" class="text-sky-400"/>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Instant Shortening</h3>
                     <p class="text-zinc-400">Transform long URLs into short, shareable links in seconds.</p>
@@ -205,7 +196,7 @@
                 <!-- Feature 2 -->
                 <div class="dark:bg-zinc-900 rounded-2xl p-8 border dark:border-zinc-800 dark:hover:border-zinc-700 transition-colors">
                     <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-purple-400"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="8" y="8" width="8" height="8"/><circle cx="12" cy="12" r="1"/></svg>
+                        <QrCode class="text-purple-400" color="currentColor"/>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">QR Codes</h3>
                     <p class="text-zinc-400">Generate QR codes for any link with one click.</p>
@@ -214,7 +205,7 @@
                 <!-- Feature 3 -->
                 <div class="dark:bg-zinc-900 rounded-2xl p-8 border dark:border-zinc-800 dark:hover:border-zinc-700 transition-colors">
                     <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-400"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                        <Activity class="text-emerald-400" color="currentColor"/>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Click Tracking</h3>
                     <p class="text-zinc-400">Monitor how many times your links are clicked.</p>
@@ -223,7 +214,7 @@
                 <!-- Feature 4 -->
                 <div class="dark:bg-zinc-900 rounded-2xl p-8 border dark:border-zinc-800 dark:hover:border-zinc-700 transition-colors">
                     <div class="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-orange-400"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <Shield class='text-orange-400' color="currentColor"/>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Secure</h3>
                     <p class="text-zinc-400">Authenticated with Hack Club SSO for security.</p>
@@ -232,7 +223,7 @@
                 <!-- Feature 5 -->
                 <div class="dark:bg-zinc-900 rounded-2xl p-8 border dark:border-zinc-800 dark:hover:border-zinc-700 transition-colors">
                     <div class="w-12 h-12 rounded-xl bg-pink-500/10 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink-400"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        <Chart class="text-pink-400"/>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Analytics for each link</h3>
                     <p class="text-zinc-400">See analytics for every link you create with great detail.</p>
@@ -241,7 +232,7 @@
                 <!-- Feature 6 -->
                 <div class="dark:bg-zinc-900 rounded-2xl p-8 border dark:border-zinc-800 dark:hover:border-zinc-700 transition-colors">
                     <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-400"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <Lock class="text-cyan-400"/>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Privacy First</h3>
                     <p class="text-zinc-400">Your data stays yours. No tracking, no ads.</p>
@@ -261,7 +252,7 @@
                 <!-- User Location -->
                 <div class="dark:bg-zinc-900 rounded-2xl p-8 border dark:border-zinc-800 dark:hover:border-zinc-700 transition-colors">
                     <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-amber-400"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 1 0 20M2 12h20"/></svg>
+                        <Globe class="text-amber-400"/>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">User Location</h3>
                     <p class="text-zinc-400">See where your users are coming from with (not so) detailed location data.</p>
@@ -270,7 +261,7 @@
                 <!-- Feature 2 -->
                 <div class="dark:bg-zinc-900 rounded-2xl p-8 border dark:border-zinc-800 dark:hover:border-zinc-700 transition-colors">
                     <div class="w-12 h-12 rounded-xl bg-pink-500/10 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink-400"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="2" y1="17" x2="22" y2="17"/><path d="M20 17v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/></svg>
+                        <Laptop class="text-pink-400"/>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Devices</h3>
                     <p class="text-zinc-400">See what devices your users are using to access your sites.</p>
@@ -279,7 +270,9 @@
                 <!-- Feature 3 -->
                 <div class="dark:bg-zinc-900 rounded-2xl p-8 border dark:border-zinc-800 dark:hover:border-zinc-700 transition-colors">
                     <div class="w-12 h-12 rounded-xl bg-lime-500/10 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-lime-400"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-lime-400">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                        </svg>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Operating systems</h3>
                     <p class="text-zinc-400">See what operating system is most popular among your users.</p>
@@ -288,7 +281,10 @@
                 <!-- Feature 4 -->
                 <div class="dark:bg-zinc-900 rounded-2xl p-8 border dark:border-zinc-800 dark:hover:border-zinc-700 transition-colors">
                     <div class="w-12 h-12 rounded-xl bg-rose-500/10 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-rose-400"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-rose-400">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Secure</h3>
                     <p class="text-zinc-400">Nobody can see your link data except you.</p>
@@ -297,7 +293,7 @@
                 <!-- Feature 5 -->
                 <div class="dark:bg-zinc-900 rounded-2xl p-8 border dark:border-zinc-800 dark:hover:border-zinc-700 transition-colors">
                     <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-400"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        <Chart2 class="text-cyan-400"/>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Analytics for each link</h3>
                     <p class="text-zinc-400">See analytics for every link you create with great detail.</p>
@@ -306,7 +302,7 @@
                 <!-- Feature 6 -->
                 <div class="border-gray-100 dark:bg-zinc-900 rounded-2xl p-8 border dark:border-zinc-800 dark:hover:border-zinc-700 transition-colors">
                     <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-purple-400"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <Shield class="text-purple-400"/>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Privacy First</h3>
                     <p class="text-zinc-400">Only you can see the analytics of your links.</p>
