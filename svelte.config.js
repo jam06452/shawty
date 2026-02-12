@@ -15,6 +15,7 @@ const config = {
 				'default-src': ['self'],
 				'style-src': ['self', 'unsafe-inline'],
 				'script-src': ['self'],
+				'img-src': ['self', 'https://api.qrserver.com'],
 				'connect-src': ['self', 'https://api.qrserver.com', 'https://api.github.com']
 			}
 		}

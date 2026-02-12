@@ -30,6 +30,15 @@
     // Show advanced options
     let showAdvanced = $state<boolean>(false);
     
+    function getQrUrl(linkId: string): string {
+        const link = data.links?.find(l => l.id === linkId);
+        if (link) {
+            const qrData = `https://shawty.app/${link.short_code}`;
+            return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}&color=000000&bgcolor=ffffff`;
+        }
+        return '';
+    }
+    
     function showQr(linkId: string) {
         showQrId = linkId;
     }
@@ -378,9 +387,9 @@
                     </button>
                 </div>
                 
-                <div class="bg-black p-6 rounded-xl flex items-center justify-center">
+                <div class="bg-white p-6 rounded-xl flex items-center justify-center">
                     <img 
-                        src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={encodeURIComponent(`${typeof window !== 'undefined' ? window.location.origin : 'https://shawty.app'}/${link.short_code}`)}&color=ffffff&bgcolor=000000"
+                        src={getQrUrl(link.id)}
                         alt="QR Code for {link.short_code}"
                         class="w-64 h-64"
                     />
