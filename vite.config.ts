@@ -16,5 +16,21 @@ export default defineConfig({
     define: {
         __GIT_COMMIT_HASH__: JSON.stringify(getGitCommitHash()),
         __GITHUB_REPO_URL__: JSON.stringify('https://github.com/las-vejas/shawty')
+    },
+    build: {
+        minify: 'terser',
+        terserOptions: {
+            compress: {
+                drop_console: true,
+            },
+        },
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'vendor': ['@supabase/supabase-js', '@vercel/analytics'],
+                    'ui': ['@lucide/svelte', 'bits-ui'],
+                }
+            }
+        }
     }
 });
