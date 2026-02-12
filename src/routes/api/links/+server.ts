@@ -2,6 +2,7 @@ import { supabase } from '$lib/supabase';
 import { validateUrlNotSelfReferencing, validateAndNormalizeUrl } from '$lib/urlValidation';
 import { sendSlackAlert } from '$lib/slack';
 import { fetchUserLinks } from '$lib/database';
+import { hashPassword } from '$lib/password';
 import type { RequestHandler } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ locals, url }) => {
@@ -109,6 +110,12 @@ export const POST: RequestHandler = async ({ request, locals }) => {
             shortCode = Math.random().toString(36).substring(2, 8);
         }
 
+        // Hash password if provided
+        let hashedPassword: string | null = null;
+        if (password) {
+            hashedPassword = await hashPassword(password);
+        }
+
         // Insert into database
         const { error: dbError } = await supabase.from('links').insert({
             short_code: shortCode,
@@ -117,7 +124,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
             clicks: 0,
             on_leaderboard: false,
             custom_slug: isCustom,
-            password: password || null
+            password: hashedPassword
         });
 
         if (dbError) {

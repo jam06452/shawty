@@ -1,4 +1,5 @@
 import { supabase } from '$lib/supabase';
+import { comparePassword } from '$lib/password';
 import { fail, redirect } from '@sveltejs/kit';
 
 export const load = async ({ params }) => {
@@ -34,8 +35,10 @@ export const actions = {
       return fail(404, { error: 'Link not found' });
     }
 
-    // Compare password
-    if (password === link.password) {
+    // Compare password using bcrypt
+    const passwordMatch = await comparePassword(password, link.password);
+    
+    if (passwordMatch) {
       // Set cookie to remember verification (expires in 1 hour)
       cookies.set(`verified_${params.code}`, 'true', {
         path: '/',
