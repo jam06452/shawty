@@ -2,7 +2,7 @@ import { supabase } from '$lib/supabase';
 import { validateUrlNotSelfReferencing, validateAndNormalizeUrl } from '$lib/urlValidation';
 import { sendSlackAlert } from '$lib/slack';
 import { fetchUserLinks } from '$lib/database';
-import { hashPassword } from '$lib/password';
+import { hashPassword } from '$lib/server/password';
 import type { RequestHandler } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ locals, url }) => {

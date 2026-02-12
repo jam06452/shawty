@@ -27,6 +27,9 @@
     let editingId = $state<string | null>(null);
     let editUrl = $state<string>('');
     
+    // Track delete confirmation modal
+    let deleteModal = $state<{ linkId: string; shortCode: string } | null>(null);
+    
     // Show advanced options
     let showAdvanced = $state<boolean>(false);
     
@@ -55,6 +58,24 @@
     function cancelEdit() {
         editingId = null;
         editUrl = '';
+    }
+    
+    function openDeleteModal(linkId: string, shortCode: string) {
+        deleteModal = { linkId, shortCode };
+    }
+    
+    function closeDeleteModal() {
+        deleteModal = null;
+    }
+    
+    function confirmDelete() {
+        if (deleteModal) {
+            const form = document.querySelector(`form[data-delete-link-id="${deleteModal.linkId}"]`) as HTMLFormElement;
+            if (form) {
+                form.requestSubmit();
+            }
+            closeDeleteModal();
+        }
     }
 
     async function handleCreateLink() {
@@ -114,7 +135,7 @@
     });
 </script>
 
-<section class="max-w-6xl mx-auto px-6 py-10 space-y-10">
+<section class="max-w-6xl mx-auto px-6 py-10 space-y-8">
   <!-- Header -->
   <header class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
     <div>
@@ -132,7 +153,7 @@
   </header>
 
   <!-- Shorten Card -->
-  <section class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-background/60 shadow-sm p-6 space-y-4">
+  <section class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-background/60 shadow-sm p-6 space-y-3">
     <h2 class="text-lg font-semibold">Shorten a link</h2>
     <div class="space-y-3">
       <div class="flex gap-3">
@@ -269,17 +290,16 @@
     </div>
   </section>
 
+  <!-- Links Heading -->
+  <div>
+    <h2 class="text-2xl font-semibold tracking-tight">Your links</h2>
+    <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+      Create, edit, and manage your shortened links
+    </p>
+  </div>
+
   <!-- Links table / list -->
   <section class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-background/60 shadow-sm overflow-hidden">
-    <div class="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 px-5 py-3">
-      <div>
-        <h2 class="text-sm font-medium">Your links</h2>
-        <p class="text-xs text-zinc-500 dark:text-zinc-400">
-          Create, edit, and manage your shortened links
-        </p>
-      </div>
-    </div>
-
     {#if data.links && data.links.length === 0}
       <!-- Empty state -->
       <div class="px-5 py-10 text-center text-sm text-zinc-500 dark:text-zinc-400">
@@ -362,6 +382,14 @@
                   </DropdownMenu.Label>
                   <DropdownMenu.Separator />
                   
+                  <!-- View Analytics -->
+                  <a href="/dashboard/analytics/{link.id}" class="contents">
+                    <DropdownMenu.Item class="cursor-pointer">
+                      <ChartNoAxesColumn class="mr-2 h-4 w-4" />
+                      View Analytics
+                    </DropdownMenu.Item>
+                  </a>
+                  
                   <!-- Show QR Code -->
                   <button type="button" class="contents" onclick={() => showQr(link.id)}>
                     <DropdownMenu.Item class="cursor-pointer">
@@ -402,19 +430,12 @@
                   <DropdownMenu.Separator />
                   
                   <!-- Delete -->
-                  <form method="POST" action="?/delete" class="contents">
+                  <form method="POST" action="?/delete" class="contents" data-delete-link-id={link.id}>
                     <input type="hidden" name="linkId" value={link.id} />
                     <button
                       type="button"
                       class="contents"
-                      onclick={(e) => {
-                        if (confirm(`Delete "{link.short_code}"? This cannot be undone.`)) {
-                          const form = e.currentTarget?.parentElement;
-                          if (form instanceof HTMLFormElement) {
-                            form.requestSubmit();
-                          }
-                        }
-                      }}
+                      onclick={() => openDeleteModal(link.id, link.short_code)}
                     >
                       <DropdownMenu.Item class="text-red-400 focus:text-red-400 cursor-pointer">
                         <Trash2 class="mr-2 h-4 w-4" />
@@ -480,4 +501,47 @@
             </div>
         </div>
     {/if}
+{/if}
+
+<!-- Delete Confirmation Modal -->
+{#if deleteModal}
+    <div 
+        role="button"
+        tabindex="0"
+        class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+        onclick={closeDeleteModal}
+        onkeydown={(e) => e.key === 'Escape' && closeDeleteModal()}
+    >
+        <div 
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-modal-title"
+            tabindex="-1"
+            class="dark:bg-zinc-900 bg-white rounded-xl p-6 max-w-md w-full shadow-lg"
+            onclick={(e) => e.stopPropagation()}
+            onkeydown={(e) => e.stopPropagation()}
+        >
+            <h3 id="delete-modal-title" class="text-xl font-semibold mb-2">Delete link?</h3>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-6">
+                Are you sure you want to delete <span class="font-mono font-medium text-zinc-900 dark:text-zinc-100">shawty.app/{deleteModal.shortCode}</span>? This cannot be undone.
+            </p>
+            
+            <div class="flex gap-3 justify-end">
+                <button
+                    type="button"
+                    onclick={closeDeleteModal}
+                    class="px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                >
+                    Cancel
+                </button>
+                <button
+                    type="button"
+                    onclick={confirmDelete}
+                    class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition-colors"
+                >
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
 {/if}

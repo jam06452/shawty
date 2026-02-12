@@ -1,5 +1,5 @@
 import { supabase } from '$lib/supabase';
-import { comparePassword } from '$lib/password';
+import { comparePassword } from '$lib/server/password';
 import { fail, redirect } from '@sveltejs/kit';
 
 export const load = async ({ params }) => {
