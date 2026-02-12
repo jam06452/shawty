@@ -101,7 +101,7 @@ export const GET = async ({ url, cookies, locals }) => {
       maxAge: 60 * 60 * 24 * 30,
     });
 
-    throw redirect(302, "/");
+    throw redirect(302, "/dashboard");
   } catch (error) {
     if (error instanceof Response) throw error;
     console.error('Auth callback error:', error);
