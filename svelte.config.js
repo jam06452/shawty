@@ -9,6 +9,14 @@ const config = {
 		adapter: adapter(),
 		prerender: {
 			entries: ['/', '/login']
+		},
+		csp: {
+			directives: {
+				'default-src': ['self'],
+				'style-src': ['self', 'unsafe-inline'],
+				'script-src': ['self'],
+				'connect-src': ['self', 'https://api.qrserver.com', 'https://api.github.com']
+			}
 		}
 	}
 };

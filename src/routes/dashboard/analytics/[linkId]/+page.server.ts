@@ -9,10 +9,10 @@ export const load = async ({ params, locals, url }) => {
 	const limit = 100;
 	const offset = (page - 1) * limit;
 
-	// Verify the link belongs to the user (admin client, but enforce ownership)
+	// Verify the link belongs to the user (admin client, but enforce ownership) - optimized column selection
 	const { data: link, error: linkError } = await supabaseAdmin
 		.from('links')
-		.select('*')
+		.select('id,short_code,long_url,clicks,created_at')
 		.eq('id', linkId)
 		.eq('user_id', locals.user.id)
 		.single();
@@ -22,10 +22,10 @@ export const load = async ({ params, locals, url }) => {
 		throw error(404, 'Link not found');
 	}
 
-	// Get paginated clicks for this link (admin client; ownership enforced above)
+	// Get paginated clicks for this link (admin client; ownership enforced above) - optimized column selection
 	const { data: clicks, count, error: clicksError } = await supabaseAdmin
 		.from('link_clicks')
-		.select('*', { count: 'exact' })
+		.select('country,device,os,browser,clicked_at,city,referrer', { count: 'exact' })
 		.eq('link_id', linkId)
 		.order('clicked_at', { ascending: false })
 		.range(offset, offset + limit - 1);

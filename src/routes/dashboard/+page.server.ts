@@ -8,9 +8,18 @@ export const load = async ({ locals, url }) => {
     if (!locals.user) throw redirect(302, '/login');
 
     const page = parseInt(url.searchParams.get('page') || '1');
-    const result = await fetchUserLinks({ userId: locals.user.id, page, limit: 20 });
+    // Clamp page to valid range
+    const validPage = Math.max(1, page);
     
-    return result;
+    const result = await fetchUserLinks({ userId: locals.user.id, page: validPage, limit: 20 });
+    
+    return {
+        ...result,
+        // Cache hints for browser
+        cache: {
+            maxAge: 60  // Cache for 1 minute
+        }
+    };
 };
 
 
@@ -20,18 +29,14 @@ export const actions = {
 
         const formData = await request.formData();
         const linkId = formData.get('linkId')?.toString();
-        let newUrl = formData.get('newUrl')?.toString();
+        const urlInput = formData.get('newUrl')?.toString();
 
         if (!linkId) {
             return fail(400, { error: 'Link ID is required' });
         }
 
-        if (!newUrl || newUrl.trim() === '') {
+        if (!urlInput || urlInput.trim() === '') {
             return fail(400, { error: 'URL cannot be empty' });
-        const urlInput = formData.get('newUrl')?.toString();
-
-        if (!linkId) {
-            return fail(400, { error: 'Link ID is required' });
         }
 
         const urlValidation = validateAndNormalizeUrl(urlInput);
@@ -39,8 +44,10 @@ export const actions = {
             return fail(400, { error: urlValidation.error });
         }
 
-        const newUrl = urlValidation.normalizedUrl!;   // Throw 404 error
-            throw error(404, 'Cannot update to a URL that points to this domain');
+        const newUrl = urlValidation.normalizedUrl!;
+        
+        if (!validateUrlNotSelfReferencing(newUrl)) {
+            throw error(400, 'Cannot update to a URL that points to this domain');
         }
 
         const { error: dbError } = await supabase

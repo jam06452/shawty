@@ -1,7 +1,9 @@
 <script lang="ts">
     import type { ActionData, PageData } from './$types';
+    import type { Link } from '$lib/database';
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
     import Button from "$lib/components/ui/button/button.svelte";
+    import { invalidateAll } from '$app/navigation';
     import ChartNoAxesColumn from "@lucide/svelte/icons/chart-no-axes-column";
     import QrCode from "@lucide/svelte/icons/qr-code";
     import Pencil from "@lucide/svelte/icons/pencil";
@@ -79,14 +81,8 @@
                 customSlugInput = '';
                 passwordInput = '';
                 showAdvanced = false;
-                // Refresh links from API
-                await new Promise(resolve => setTimeout(resolve, 500));
-                const linksResponse = await fetch('/api/links');
-                if (linksResponse.ok) {
-                    const linksData = await linksResponse.json();
-                    data.links = linksData.links;
-                    data.total = linksData.total;
-                }
+                // Use invalidateAll for faster, more efficient data refresh
+                await invalidateAll();
             } else {
                 apiMessage = { type: 'error', text: result.error || 'Failed to create link' };
             }

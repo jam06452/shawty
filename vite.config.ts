@@ -19,16 +19,25 @@ export default defineConfig({
     },
     build: {
         minify: 'terser',
-        terserOptions: {
-            compress: {
-                drop_console: true,
-            },
-        },
         rollupOptions: {
             output: {
-                manualChunks: {
-                    'vendor': ['@supabase/supabase-js', '@vercel/analytics'],
-                    'ui': ['@lucide/svelte', 'bits-ui'],
+                manualChunks(id) {
+                    // Vendor chunks for better caching
+                    if (id.includes('node_modules')) {
+                        if (id.includes('@supabase')) {
+                            return 'supabase';
+                        }
+                        if (id.includes('@vercel/analytics')) {
+                            return 'analytics';
+                        }
+                        if (id.includes('@lucide/svelte')) {
+                            return 'lucide';
+                        }
+                        if (id.includes('bits-ui')) {
+                            return 'bits-ui';
+                        }
+                        return 'vendor';
+                    }
                 }
             }
         }
